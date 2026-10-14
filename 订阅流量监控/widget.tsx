@@ -138,10 +138,6 @@ function SubRow({ s, i, barW, opts = {} }: { s: SubResult; i: number; barW: numb
           <Text {...fontCaption} fontWeight="semibold" foregroundStyle={textColor(schemeOf())}>
             {s.name}
           </Text>
-          <Spacer />
-          <Text {...fontCaption} fontWeight="semibold" foregroundStyle={st.color as any}>
-            {s.nodeCount && s.nodeCount > 0 ? `${s.nodeCount} 节点` : st.label}
-          </Text>
         </HStack>
         <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
           {s.nodeCount && s.nodeCount > 0 ? `${s.nodeCount} 节点 · 未提供流量信息` : s.error || "读取失败"}
@@ -332,13 +328,14 @@ function SingleLarge({ s }: { s: SubResult }) {
   const cell = (k: string, v: string, c?: string) => (
     <Glass
       extra={{
-        spacing: 3,
+        spacing: 2,
+        padding: { horizontal: 10, vertical: 6 },
       }}
     >
       <Text {...fontCaption} fontWeight="medium" foregroundStyle={dimColor(schemeOf())}>
         {k}
       </Text>
-      <Text font={15} fontWeight="bold" foregroundStyle={(c || textColor(schemeOf())) as any}>
+      <Text font={14} fontWeight="bold" foregroundStyle={(c || textColor(schemeOf())) as any}>
         {v}
       </Text>
     </Glass>
@@ -346,26 +343,26 @@ function SingleLarge({ s }: { s: SubResult }) {
   return (
     <VStack
       alignment="leading"
-      spacing={10}
-      padding={20}
+      spacing={7}
+      padding={{ horizontal: 18, vertical: 14 }}
       background={bgGradient(schemeOf())}
       frame={{ maxWidth: "infinity", maxHeight: "infinity" }}
     >
       <Header list={[s]} title={s.name} />
       <HStack alignment="center" spacing={14}>
-        <Rings values={[{ pct: p == null ? 1 : p, color: C.accent }]} size={120} stroke={16} gap={0} />
+        <Rings values={[{ pct: p == null ? 1 : p, color: C.accent }]} size={104} stroke={14} gap={0} />
         <VStack alignment="leading" spacing={2}>
           <Text {...fontCaption} fontWeight="medium" foregroundStyle={dimColor(schemeOf())}>
             剩余流量
           </Text>
-          <BigRemain t={t} size={34} />
+          <BigRemain t={t} size={30} />
           <Text {...fontCaption} fontWeight="semibold" foregroundStyle={C.accent as any}>
             {p == null ? "" : `剩余 ${Math.round(p * 100)}% · 状态 ${statusOf(s).label}`}
           </Text>
         </VStack>
         <Spacer />
       </HStack>
-      <Bar pct={p == null ? 1 : p} color={C.accent} height={6} />
+      <Bar pct={p == null ? 1 : p} color={C.accent} height={5} />
       <HStack spacing={8}>
         {cell("下载", Number.isFinite(t.download as number) ? fmtBytes(t.download as number) : "--")}
         {cell("上传", Number.isFinite(t.upload as number) ? fmtBytes(t.upload as number) : "--")}
@@ -511,7 +508,7 @@ function WeekCard({ shown, height }: { shown: SubResult[]; height: number }) {
   const legend = shown.map((s, i) => (
     <HStack alignment="center" spacing={3} key={i}>
       <Dot color={colorOf(i)} size={6} />
-      <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
+      <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())} lineLimit={1} minScaleFactor={0.6}>
         {s.name}
       </Text>
     </HStack>
@@ -520,7 +517,8 @@ function WeekCard({ shown, height }: { shown: SubResult[]; height: number }) {
   return (
     <Glass
       extra={{
-        spacing: 4,
+        spacing: 3,
+        padding: { horizontal: 12, vertical: 8 },
       }}
     >
       <HStack alignment="center" spacing={6}>
@@ -534,7 +532,7 @@ function WeekCard({ shown, height }: { shown: SubResult[]; height: number }) {
         {legend}
       </HStack>
       <Spacer />
-      <Week list={shown} height={Math.max(30, height - 58)} />
+      <Week list={shown} height={Math.max(18, height - 44)} />
       <HStack spacing={0}>
         {labels.map((l, i) => (
           <HStack key={i} alignment="center">
@@ -559,15 +557,16 @@ function MultiLarge({ list, config }: { list: SubResult[]; config: AppConfig }) 
   const shown = list.slice(0, 4)
   const n = shown.length
   const { sumRemain, sumToday, nodes } = multiSummary(shown)
-  const chartH = n >= 3 ? 0 : 62
+  const showWeek = n <= 3
+  const chartH = showWeek ? (n === 3 ? 40 : 46) : 0
   const cardSpacing = n >= 4 ? 1 : 2
   const valueSize = n >= 4 ? 13 : 15
   const barH = n >= 4 ? 3 : 4
   return (
     <VStack
       alignment="leading"
-      spacing={8}
-      padding={20}
+      spacing={4}
+      padding={{ horizontal: 16, vertical: 10 }}
       background={bgGradient(schemeOf())}
       frame={{ maxWidth: "infinity", maxHeight: "infinity" }}
     >
@@ -575,15 +574,15 @@ function MultiLarge({ list, config }: { list: SubResult[]; config: AppConfig }) 
       <HStack alignment="center" spacing={12}>
         <Rings
           values={shown.map((s, i) => ({ pct: s.traffic ? (pctLeft(s.traffic) ?? 1) : 0, color: colorOf(i) }))}
-          size={84}
-          stroke={n >= 4 ? 9 : 11}
+          size={56}
+          stroke={9}
           gap={3}
         />
         <VStack alignment="leading" spacing={2}>
           <Text {...fontCaption} fontWeight="medium" foregroundStyle={dimColor(schemeOf())}>
             {`${n} 个订阅 · 合计剩余`}
           </Text>
-          <BigRemain t={{ remaining: sumRemain }} size={22} />
+          <BigRemain t={{ remaining: sumRemain }} size={18} />
           <Text {...fontCaption} fontWeight="semibold" foregroundStyle={C.accent as any}>
             {`今日已用 ${fmtBytes(sumToday)}${nodes ? ` · ${nodes} 节点` : ""}`}
           </Text>
@@ -594,7 +593,7 @@ function MultiLarge({ list, config }: { list: SubResult[]; config: AppConfig }) 
         {shown.map((s, i) => (
           <Glass
             extra={{
-              padding: n >= 4 ? { horizontal: 10, vertical: 6 } : 10,
+              padding: n >= 4 ? { horizontal: 10, vertical: 4 } : { horizontal: 12, vertical: 6 },
               spacing: 2,
             }}
             key={i}
@@ -603,7 +602,7 @@ function MultiLarge({ list, config }: { list: SubResult[]; config: AppConfig }) 
           </Glass>
         ))}
       </VStack>
-      {chartH ? (
+      {showWeek ? (
         <WeekCard shown={shown} height={chartH} />
       ) : (
         <Spacer />
