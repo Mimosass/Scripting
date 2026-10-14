@@ -25,6 +25,8 @@ import {
 
 const MAX_SUBS = 4
 
+const fontNote = { font: "footnote" as const, fontWeight: "regular" as const, foregroundStyle: "secondaryLabel" as any }
+
 function ConfigView() {
   const [config, setConfig] = useState<AppConfig>(() => loadConfig())
   const [family, setFamily] = useState<string>("systemMedium")
@@ -70,6 +72,7 @@ function ConfigView() {
           const sub = config.subs[i] || { url: "", name: "", resetDay: "", planGB: "" }
           return (
             <Section key={i} header={<Text>{`订阅 ${i + 1}`}</Text>}>
+              <Text {...fontNote}>订阅的直链或编码后的链接，最多 4 个</Text>
               <TextField
                 label={<Text>链接</Text>}
                 value={sub.url}
@@ -77,6 +80,7 @@ function ConfigView() {
                 textFieldStyle="roundedBorder"
                 onChanged={(v: string) => updateSub(i, { url: v })}
               />
+              <Text {...fontNote}>组件上展示的名称，留空则用链接名</Text>
               <TextField
                 label={<Text>名称</Text>}
                 value={sub.name}
@@ -84,6 +88,7 @@ function ConfigView() {
                 textFieldStyle="roundedBorder"
                 onChanged={(v: string) => updateSub(i, { name: v })}
               />
+              <Text {...fontNote}>每月流量重置日（1-31），用于到期与日均估算</Text>
               <TextField
                 label={<Text>每月重置日 (1-31)</Text>}
                 value={sub.resetDay}
@@ -91,6 +96,7 @@ function ConfigView() {
                 textFieldStyle="roundedBorder"
                 onChanged={(v: string) => updateSub(i, { resetDay: v })}
               />
+              <Text {...fontNote}>仅当订阅只返回剩余量时用于估算总量，默认 100</Text>
               <TextField
                 label={<Text>套餐总量 (GB)</Text>}
                 value={sub.planGB}
@@ -103,6 +109,7 @@ function ConfigView() {
         })}
 
         <Section header={<Text>通用</Text>}>
+          <Text {...fontNote}>多订阅时组件顶部显示的标题，留空显示「订阅流量」</Text>
           <TextField
             label={<Text>组件标题</Text>}
             value={config.title}
@@ -110,6 +117,7 @@ function ConfigView() {
             textFieldStyle="roundedBorder"
             onChanged={(v: string) => update({ title: v })}
           />
+          <Text {...fontNote}>组件自动重新拉取数据的间隔，0.5-24 小时</Text>
           <TextField
             label={<Text>刷新间隔 (小时, 0.5-24)</Text>}
             value={String(config.refreshHours)}
@@ -117,6 +125,7 @@ function ConfigView() {
             textFieldStyle="roundedBorder"
             onChanged={(v: string) => update({ refreshHours: Number.isFinite(Number(v)) ? Number(v) : 2 })}
           />
+          <Text {...fontNote}>留空则自动尝试常见客户端标识，部分订阅需指定</Text>
           <TextField
             label={<Text>自定义 User-Agent</Text>}
             value={config.userAgent}

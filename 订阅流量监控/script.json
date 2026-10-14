@@ -1,9 +1,45 @@
 {
-  "name": "订阅流量监控",
-  "icon": "chart.pie.fill",
-  "color": "rgba(191, 90, 242, 1)",
-  "version": "1.0.0",
-  "description": "最多 4 个订阅，同心圆环 + 列表样式，大号含近 7 天用量图（Hark 环形版移植）",
-  "entry": "index.tsx",
-  "runInApp": true
+  "contributors" : [
+
+  ],
+  "version" : "1.0.0",
+  "icon" : "chart.pie.fill",
+  "color" : "rgba(191, 90, 242, 1)",
+  "permissions" : null,
+  "name" : "订阅流量监控",
+  "intentInputTypes" : [
+
+  ],
+  "author" : null,
+  "remoteResource" : {
+    "autoUpdateInterval" : null,
+    "url" : "https:\/\/github.com\/Mimosass\/Scripting\/tree\/e7d47da077001f15ecdb5385919ef3ccc7a75c93\/%E8%AE%A2%E9%98%85%E6%B5%81%E9%87%8F%E7%9B%91%E6%8E%A7",
+    "hash" : "02624bb4df10174d8c9531dcc9037fd8"
+  },
+  "description" : "最多 4 个订阅，同心圆环 + 列表样式，大号含近 7 天用量图（Hark 环形版移植）",
+  "runInApp" : true,
+  "entry" : "index.tsx",
+  "localizedNames" : {
+    "en" : "",
+    "it" : "",
+    "ru" : "",
+    "ja" : "",
+    "es" : "",
+    "fr" : "",
+    "pt" : "",
+    "de" : "",
+    "zh" : ""
+  },
+  "iconImage" : null,
+  "localizedDescriptions" : {
+    "en" : "",
+    "it" : "",
+    "ru" : "",
+    "ja" : "",
+    "es" : "",
+    "fr" : "",
+    "pt" : "",
+    "de" : "",
+    "zh" : ""
+  }
 }

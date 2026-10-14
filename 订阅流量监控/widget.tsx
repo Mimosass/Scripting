@@ -33,9 +33,7 @@ import {
   daysUntil,
   Rings,
   Bar,
-  Spark,
   Week,
-  Gauge,
   type SubResult,
   type Scheme,
   type Traffic,
@@ -539,7 +537,7 @@ function WeekCard({ shown, height }: { shown: SubResult[]; height: number }) {
       <Week list={shown} height={Math.max(30, height - 58)} />
       <HStack spacing={0}>
         {labels.map((l, i) => (
-          <HStack key={i} alignment="center" frame={{ width: `${100 / 7}%` as any }}>
+          <HStack key={i} alignment="center">
             <Spacer />
             <Text
               {...fontCaption}
@@ -556,181 +554,6 @@ function WeekCard({ shown, height }: { shown: SubResult[]; height: number }) {
   )
 }
 
-function DetailCard({ s, i, o = {} }: { s: SubResult; i: number; o?: any }) {
-  const F = { name: o.name || 11, big: o.big || 19, small: o.small || 9 }
-  const color = colorOf(i)
-  const st = statusOf(s)
-  const head = (
-    <HStack alignment="center" spacing={4}>
-      <Dot color={st.color === C.ok ? color : st.color} size={6} />
-      <Text font={F.name} fontWeight="semibold" foregroundStyle={textColor(schemeOf())} minScaleFactor={1}>
-        {s.name}
-      </Text>
-      <Spacer />
-      {st.color !== C.ok && s.traffic ? (
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={st.color as any}>
-          {st.label}
-        </Text>
-      ) : (
-        <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-          {s.nodeCount && s.nodeCount > 0 ? `${s.nodeCount} 节点` : "-- 节点"}
-        </Text>
-      )}
-    </HStack>
-  )
-  if (!s.traffic) {
-    return (
-      <Glass
-        extra={{
-          height: o.height,
-          spacing: 2,
-        }}
-      >
-        {head}
-        <Spacer />
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={dimColor(schemeOf())}>
-          读取失败
-        </Text>
-        <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-          {s.error || "稍后自动重试"}
-        </Text>
-        <Spacer />
-      </Glass>
-    )
-  }
-  const t = s.traffic
-  const p = pctLeft(t)
-  const daily = dailyBudget(s)
-  const e = daysUntil(t.expireAt)
-  const r = nextReset(s.resetDay)
-  const b = splitBytes(t.remaining)
-  const fc = forecast(s)
-  return (
-    <Glass
-      extra={{
-        glassEffect: "auto",
-        shape: { type: "rect", cornerRadius: CARD_RADIUS },
-        height: o.height,
-        spacing: 2,
-      }}
-    >
-      {head}
-      <HStack alignment="lastTextBaseline" spacing={4}>
-        <VStack alignment="leading" spacing={0}>
-          <HStack alignment="lastTextBaseline" spacing={2}>
-            <Text font={F.big} fontWeight="bold" foregroundStyle={textColor(schemeOf())} minScaleFactor={1}>
-              {b.n}
-            </Text>
-            <Text {...fontCaption} fontWeight="semibold" foregroundStyle={dimColor(schemeOf())}>
-              {b.u}
-            </Text>
-          </HStack>
-          <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())} minScaleFactor={0.7}>
-            {`已用 ${fmtBytes(t.used ?? 0)} / ${t.unlimited ? "∞" : fmtBytes(t.total ?? 0)}`}
-          </Text>
-        </VStack>
-        <Spacer />
-        <VStack alignment="center" spacing={-4}>
-          <Gauge pct={p == null ? 1 : p} color={color} width={64} />
-          <Text {...fontCaption} fontWeight="bold" foregroundStyle={color as any}>
-            {p == null ? "∞" : `${Math.round(p * 100)}%`}
-          </Text>
-        </VStack>
-      </HStack>
-      <HStack alignment="lastTextBaseline" spacing={5}>
-        <Spark values={s.hist || [null, null, null, null, null, null, s.today ?? null]} color={color} width={70} height={14} />
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={textColor(schemeOf())}>
-          {`今日 ${s.today == null ? "--" : fmtBytes(s.today)}`}
-        </Text>
-      </HStack>
-      <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-        {`日均可用 ${daily == null ? "--" : fmtBytes(daily)}`}
-      </Text>
-      <Text {...fontCaption} fontWeight="semibold" foregroundStyle={fc.color as any}>
-        {fc.text}
-      </Text>
-      <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-        {`${e == null ? "长期有效" : `到期 ${Math.max(0, e)} 天`} · ${r ? (r.days === 0 ? "今日重置" : `重置 ${r.days} 天`) : "不重置"}`}
-      </Text>
-    </Glass>
-  )
-}
-
-function CompactCard({ s, i }: { s: SubResult; i: number }) {
-  const color = colorOf(i)
-  const st = statusOf(s)
-  const head = (
-    <HStack alignment="center" spacing={3}>
-      <Dot color={st.color === C.ok ? color : st.color} size={6} />
-      <Text {...fontCaption} fontWeight="semibold" foregroundStyle={textColor(schemeOf())} minScaleFactor={0.8}>
-        {s.name}
-      </Text>
-    </HStack>
-  )
-  if (!s.traffic) {
-    return (
-      <Glass
-        extra={{
-          glassEffect: "auto",
-          shape: { type: "rect", cornerRadius: CARD_RADIUS },
-          height: 108,
-          spacing: 2,
-        }}
-      >
-        {head}
-        <Spacer />
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={dimColor(schemeOf())}>
-          读取失败
-        </Text>
-        <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-          {s.error || "稍后重试"}
-        </Text>
-        <Spacer />
-      </Glass>
-    )
-  }
-  const t = s.traffic
-  const p = pctLeft(t)
-  const b = splitBytes(t.remaining)
-  const fc = forecast(s)
-  const e = daysUntil(t.expireAt)
-  const r = nextReset(s.resetDay)
-  return (
-    <Glass
-      extra={{
-        height: 108,
-        spacing: 2,
-      }}
-    >
-      {head}
-      <HStack alignment="lastTextBaseline" spacing={2}>
-        <Text font={17} fontWeight="bold" foregroundStyle={textColor(schemeOf())} minScaleFactor={0.7}>
-          {b.n}
-        </Text>
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={dimColor(schemeOf())}>
-          {b.u}
-        </Text>
-        <Spacer />
-        <Text {...fontCaption} fontWeight="bold" foregroundStyle={color as any}>
-          {p == null ? "∞" : `${Math.round(p * 100)}%`}
-        </Text>
-      </HStack>
-      <Bar pct={p == null ? 1 : p} color={color} height={4} />
-      <HStack alignment="lastTextBaseline" spacing={3}>
-        <Spark values={s.hist || [null, null, null, null, null, null, s.today ?? null]} color={color} width={70} height={14} />
-        <Text {...fontCaption} fontWeight="semibold" foregroundStyle={textColor(schemeOf())}>
-          {`今日 ${s.today == null ? "--" : fmtBytes(s.today)}`}
-        </Text>
-      </HStack>
-      <Text {...fontCaption} fontWeight="semibold" foregroundStyle={fc.color as any}>
-        {fc.text}
-      </Text>
-      <Text {...fontCaption} foregroundStyle={dimColor(schemeOf())}>
-        {`${e == null ? "长期" : `到期${Math.max(0, e)}天`}${r ? (r.days === 0 ? "·今日重置" : `·重置${r.days}天`) : ""}`}
-      </Text>
-    </Glass>
-  )
-}
 
 function MultiLarge({ list, config }: { list: SubResult[]; config: AppConfig }) {
   const shown = list.slice(0, 4)

@@ -121,10 +121,6 @@ export function dim2Color(_s: Scheme): Color {
   return "tertiaryLabel"
 }
 
-export function tintedGlass(s: Scheme) {
-  return UIGlass.clear().interactive(true)
-}
-
 export function bgGradient(s: Scheme): LinearGradient {
   // IPA 风格的深浅渐变底，配合 Liquid Glass 卡片
   return {
