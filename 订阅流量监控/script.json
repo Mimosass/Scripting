@@ -1,0 +1,9 @@
+{
+  "name": "订阅流量监控",
+  "icon": "chart.pie.fill",
+  "color": "rgba(191, 90, 242, 1)",
+  "version": "1.0.0",
+  "description": "最多 4 个订阅，同心圆环 + 列表样式，大号含近 7 天用量图（Hark 环形版移植）",
+  "entry": "index.tsx",
+  "runInApp": true
+}
